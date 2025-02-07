@@ -1,0 +1,8 @@
+body{
+    background-image: url("image/carousel-1.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+h2{
+    color: white;
+}
