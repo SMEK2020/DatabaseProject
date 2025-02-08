@@ -17,7 +17,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Result</title>
+    <title>Daily Attendance</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="dashboard.css">
     <link rel="stylesheet" href="update.css">
@@ -37,9 +37,11 @@
             <div class="list-group list-group-flush">
                 <a href="dashboard.php" class="list-group-item list-group-item-action">Dashboard</a>
                 <a href="updateprofile.php" class="list-group-item list-group-item-action">Update Profile</a>
-                <a href="downloadresult.php" class="list-group-item list-group-item-action  active">Download Result</a>
+                <a href="dailyattendance.php" class="list-group-item list-group-item-action  active">Daily Attendance</a>
+                <a href="giveinmark.php" class="list-group-item list-group-item-action  ">InCourse Mark</a>
+                
                 <a href="enroll.php" class="list-group-item list-group-item-action">Enroll Course</a>
-                <a href="certificaterequest.php" class="list-group-item list-group-item-action">Certificate Application</a>
+                
                 <a href="changepass.php" class="list-group-item list-group-item-action">Change Password</a>
                 <a href="logouthelper.php" class="list-group-item list-group-item-action">Logout</a>
             </div>
@@ -75,20 +77,31 @@
                         <label class="form-label">Student List:</label>
                         <table class="table table-bordered">
                             <thead>
+                            
                                 <tr>
                                     <th>Student ID</th>
                                     <th>Present</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Student 1</td>
-                                    <td><input type="checkbox"></td>
-                                </tr>
-                                <tr>
-                                    <td>Student 2</td>
-                                    <td><input type="checkbox"></td>
-                                </tr>
+                            <?php
+                $stmt = $conn->prepare("SELECT * FROM students");
+                $stmt->execute();
+                $res = $stmt->get_result();
+                $sl = 0;
+                while($row = $res->fetch_assoc()){
+                    $sl++;
+            ?>   
+                            <tr>
+                    
+                    <td><?php echo $row['roll'];?></td>
+                    <td><input type="checkbox"></td>
+                    
+                </tr>
+                                
+                                <?php
+                }
+            ?>
                             </tbody>
                         </table>
                     </div>
