@@ -55,59 +55,48 @@
             </nav>
 
             <div class="container mt-4">
-            <div class="container">
-            <h2 class="text-center">Download Result</h2><br><br>
-            <table class="table table-hover">
-            <thead>
-    <tr>
-      <th scope="col">Serial No.</th>
-      <th scope="col">Semester</th>
-      <th scope="col">Published Date</th>
-      <th style="text-align: center;">
-    
-        Download
-    
-</th>
-
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>1st Year 1st</td>
-      <td>30 November,2023</td>
-      <td style="text-align: center;">
-    <a href="#" style="display: inline-block;">
-        <i class="fa-solid fa-download"></i>
-    </a>
-</td>
-
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>1st Year 2nd</td>
-      <td>24 June,2024</td>
-      <td style="text-align: center;">
-    <a href="#" style="display: inline-block;">
-        <i class="fa-solid fa-download"></i>
-    </a>
-</td>
-
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>2nd Year 1st</td>
-      <td >30 January,2025</td>
-      <td style="text-align: center;">
-    <a href="#" style="display: inline-block;">
-        <i class="fa-solid fa-download"></i>
-    </a>
-</td>
-
-    </tr>
-  </tbody>
-            </table>
+            <div class="card mb-4">
+            <div class="card-header bg-primary text-white">Daily Attendance</div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Select Course:</label>
+                        <select class="form-select">
+                            <option>Course 1</option>
+                            <option>Course 2</option>
+                            <option>Course 3</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date:</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Student List:</label>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Present</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Student 1</td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                                <tr>
+                                    <td>Student 2</td>
+                                    <td><input type="checkbox"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="submit" class="btn btn-success">Submit Attendance</button>
+                </form>
             </div>
+        </div>
+        
                 
             </div>
         </div>

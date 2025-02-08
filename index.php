@@ -69,7 +69,7 @@
                         <a href="#" class="nav-item nav-link">Contact</a>
                     </div>
                     <div class="border-start ps-4 d-none d-lg-block">
-                        <button type="button" class="btn btn-sm p-0"><i class="fa fa-search"><a href="##">Validity Check</a></i></button>
+                        <button type="button" class="btn btn-sm p-0"><i class="fa fa-search"><a href="validity.php">Validity Check</a></i></button>
                     </div>
                 </div>
             </nav>
@@ -322,7 +322,8 @@
             <hr>
             <div class="row">
                 <div class="log">
-                    <div class=""><a href="Alogin.html" target="#">Admin Login</a></div>
+                    <div class=""><a href="Alogin.php" target="#">Admin Login</a></div>
+                    <div class=""><a href="Tlogin.php" target="#">Teacher Login</a></div>
                 <div class=""><a href="Slogin.php" target="#">Student Login</a></div>
                 </div>
 

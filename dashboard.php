@@ -35,6 +35,7 @@
                 <a href="#" class="list-group-item list-group-item-action active">Dashboard</a>
                 <a href="updateprofile.php" class="list-group-item list-group-item-action">Update Profile</a>
                 <a href="downloadresult.php" class="list-group-item list-group-item-action">Download Result</a>
+                <a href="enroll.php" class="list-group-item list-group-item-action">Enroll Course</a>
                 <a href="certificaterequest.php" class="list-group-item list-group-item-action">Certificate Application</a>
                 <a href="changepass.php" class="list-group-item list-group-item-action">Change Password</a>
                 <a href="logouthelper.php" class="list-group-item list-group-item-action">Logout</a>
