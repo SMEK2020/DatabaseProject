@@ -54,7 +54,7 @@
 			</div>
 			<h2 class="text-4xl text-center mb-5 font-semibold text-green-500 py-3">Teacher Login</h2>
 			
-            <form method="POST" action="loginhelper.php">
+            <form method="POST" action="Tloginhelper.php">
                 
                 <input type="text" class="text-white" name ="e" style="background:transparent; outline:none;" placeholder="Email">
 

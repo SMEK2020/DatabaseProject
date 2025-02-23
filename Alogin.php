@@ -9,8 +9,8 @@
 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	
-	<link rel="stylesheet" href="css/style.css">
-	<link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+	<link rel="stylesheet" href="../css/style.css">
+	<link rel="shortcut icon" href="../img/favicon.png" type="image/x-icon">
 
 	 <!-- Google Web Fonts -->
 	 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,7 +54,7 @@
 			</div>
 			<h2 class="text-4xl text-center mb-5 font-semibold text-green-500 py-3">Admin Login</h2>
 			
-            <form method="POST" action="loginhelper.php">
+            <form method="POST" action="Aloginhelper.php">
                 
                 <input type="text" class="text-white" name ="e" style="background:transparent; outline:none;" placeholder="Email">
 

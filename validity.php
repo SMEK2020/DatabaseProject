@@ -59,7 +59,7 @@
                 <input type="text" class="text-white" name ="id" style="background:transparent; outline:none;" placeholder="ID">
 
 				<br><br>
-                <input type="text" class="text-white" name="d" style="background:transparent; outline:none;" placeholder="Date">
+                <input type="date" class="text-white" name="d" style="background:transparent; outline:none;" placeholder="Date">
 
                 <br><br>
                 <div class="w-full flex justify-center items-center" ><button type="submit"  class="focus:outline-none text-white bg-[#22c55e]    text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 rounded">Check</button></div>
