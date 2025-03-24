@@ -3,7 +3,7 @@
         'name' => 'phpmailer/phpmailer',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'db7ea4b10048148cccd5e680fdfeba792d3797f7',
+        'reference' => '16b154e803431422ea4517900b1cabe78594e25c',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -154,7 +154,7 @@
         'phpmailer/phpmailer' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'db7ea4b10048148cccd5e680fdfeba792d3797f7',
+            'reference' => '16b154e803431422ea4517900b1cabe78594e25c',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -226,7 +226,7 @@
         'roave/security-advisories' => array(
             'pretty_version' => 'dev-latest',
             'version' => 'dev-latest',
-            'reference' => '23b2141a1db97b4e3278510ed9e74a16361619b1',
+            'reference' => '80b1c8ff865073edb25e919bf53b779898062760',
             'type' => 'metapackage',
             'install_path' => null,
             'aliases' => array(

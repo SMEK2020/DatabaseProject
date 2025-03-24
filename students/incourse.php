@@ -1,10 +1,77 @@
 <?php
-    include('../connect.php');
-    session_start();
-    if( !isset($_SESSION['id'])  ){
-        header('location: Slogin.php');
-        exit;
+include('../connect.php');
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    header('location: Slogin.php');
+    exit;
+}
+
+$userid = $_SESSION['userid'];
+
+
+if (!isset($_SESSION['fullname']) || !isset($_SESSION['profilepicture'])) {
+    // Fetch student details if not already in session
+    $sql = "SELECT profilepicture, fullname FROM student WHERE userid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $userid);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        
+        // Store in session
+        $_SESSION['fullname'] = $row['fullname'];
+        $_SESSION['profilepicture'] = !empty($row['profilepicture']) ? $row['profilepicture'] : 'image/default.png';
+    } else {
+        $_SESSION['fullname'] = 'Unknown User';
+        $_SESSION['profilepicture'] = 'image/default.png'; // Default image
     }
+    $stmt->close();
+}
+
+// Set variables for display
+$fullname = $_SESSION['fullname'];
+$profilePic = $_SESSION['profilepicture'];
+
+
+
+
+
+// Fetch student ID and session
+$studentid = "";
+$sql_student = "SELECT studentid, session FROM student WHERE userid = ?";
+$stmt_student = $conn->prepare($sql_student);
+$stmt_student->bind_param("i", $userid);
+$stmt_student->execute();
+$result_student = $stmt_student->get_result();
+
+if ($result_student->num_rows == 1) {
+    $row_student = $result_student->fetch_assoc();
+    $studentid = $row_student['studentid'];
+    $session = $row_student['session'];
+}
+$stmt_student->close();
+
+// Fetch enrolled courses
+$sql_courses = "
+    SELECT c.courseid, c.coursename 
+    FROM courses c
+    JOIN enrollment e ON c.courseid = e.courseid
+    WHERE e.studentid = ?
+";
+$stmt_courses = $conn->prepare($sql_courses);
+$stmt_courses->bind_param("s", $studentid);
+$stmt_courses->execute();
+$result_courses = $stmt_courses->get_result();
+
+// Fetch attendance
+$sql_attendance = "SELECT courseid, percentage FROM attendance WHERE studentid = ?";
+$stmt_attendance = $conn->prepare($sql_attendance);
+$stmt_attendance->bind_param("s", $studentid);
+$stmt_attendance->execute();
+$result_attendance = $stmt_attendance->get_result();
 ?>
 
 
@@ -31,8 +98,8 @@
         <!-- Sidebar -->
         <div class="bg-light border-end" id="sidebar-wrapper">
             <div class="sidebar-heading text-center py-4 primary-text"> 
-                <img src="../image/my pic.png" class="rounded-circle" width="80" alt="Profile Picture">
-                <h6>SAZID MAHMUD EMON KHAN</h6>
+            <img src="<?php echo htmlspecialchars($profilePic); ?>" class="rounded-circle" width="90" height="90" alt="Profile Picture">
+            <h6><?php echo htmlspecialchars($fullname); ?></h6>
             </div>
             <div class="list-group list-group-flush">
                 <a href="index.php" class="list-group-item list-group-item-action">Dashboard</a>
@@ -41,6 +108,7 @@
                 <a href="dailyattendance.php" class="list-group-item list-group-item-action">Daily Attendance</a>
                 <a href="incourse.php" class="list-group-item list-group-item-action active">InCourse Mark</a>
                 <a href="certificaterequest.php" class="list-group-item list-group-item-action">Certificate Application</a>
+                <a href="retake.php" class="list-group-item list-group-item-action">Retake/Improvement Course</a>
                 <a href="changepass.php" class="list-group-item list-group-item-action">Change Password</a>
                 <a href="logouthelper.php" class="list-group-item list-group-item-action">Logout</a>
             </div>
@@ -55,59 +123,65 @@
                 </div>
             </nav>
 
-            <div class="container mt-4 ">
-            <div class="col-md-12 " style="margin-top:40px ;">
-                    <div class="card shadow p-3">
-                        <h4 class="text-center">InCourse Mark</h4>
-                        <div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead >
-            <tr >
-                <th>Course</th>
-                <th>First Incourse</th>
-                <th>Second Incourse</th>
-                <th>Average</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Database</td>
-                <td>80%</td>
-                <td>85%</td>
-                <td>82.5%</td>
-            </tr>
-            <tr>
-                <td>Theory of Computing</td>
-                <td>75%</td>
-                <td>78%</td>
-                <td>76.5%</td>
-            </tr>
-            <tr>
-                <td>Numerical Method</td>
-                <td>70%</td>
-                <td>75%</td>
-                <td>72.5%</td>
-            </tr>
-            <tr>
-                <td>Accounting</td>
-                <td>70%</td>
-                <td>75%</td>
-                <td>72.5%</td>
-            </tr>
-            <tr>
-                <td>Data Structure and Algorithm-II</td>
-                <td>70%</td>
-                <td>75%</td>
-                <td>72.5%</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+            <div class="container mt-4">
+    <div class="col-md-12" style="margin-top:40px;">
+    <div class="card shadow p-3">
+            <h4 class="text-center">InCourse Mark</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>First Incourse</th>
+                            <th>Second Incourse</th>
+                            <th>Average</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php 
+                        $seen_courses = []; // ডুপ্লিকেট চেকের জন্য অ্যারে
 
-                    </div>
-                </div>
-                
+                        while ($row_course = $result_courses->fetch_assoc()) { 
+                            $courseid = $row_course['courseid'];
+                            $coursename = $row_course['coursename'];
+
+                            // যদি এই কোর্স আগে প্রিন্ট হয়ে থাকে, তাহলে স্কিপ করুন
+                            if (in_array($courseid, $seen_courses)) {
+                                continue;
+                            }
+                            $seen_courses[] = $courseid; // নতুন কোর্স ট্র্যাক করুন
+
+                            $sql_marks = "SELECT finmark, sinmark, intmark FROM incousemark WHERE courseid = ? AND studentid = ?";
+                            $stmt_marks = $conn->prepare($sql_marks);
+                            $stmt_marks->bind_param("ss", $courseid, $studentid);
+                            $stmt_marks->execute();
+                            $result_marks = $stmt_marks->get_result();
+                            
+                            if ($result_marks->num_rows == 1) {
+                                $row_marks = $result_marks->fetch_assoc();
+                                $finmark = $row_marks['finmark'];
+                                $sinmark = $row_marks['sinmark'];
+                                $avgmark = $row_marks['intmark'];
+                            } else {
+                                $finmark = "N/A";
+                                $sinmark = "N/A";
+                                $avgmark = "N/A";
+                            }
+                            $stmt_marks->close();
+                        ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($coursename); ?></td>
+                                <td><?php echo htmlspecialchars($finmark); ?></td>
+                                <td><?php echo htmlspecialchars($sinmark); ?></td>
+                                <td><?php echo htmlspecialchars($avgmark); ?></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
             </div>
+        </div>
+    </div>
+</div>
         </div>
     </div>
 </div>

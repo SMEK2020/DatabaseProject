@@ -1,10 +1,57 @@
 <?php
     include('../connect.php');
     session_start();
-    if( !isset($_SESSION['id'])  ){
-        header('location: Slogin.php');
-        exit;
+
+if (!isset($_SESSION['userid'])) {
+    header('location: ../Tlogin.php');
+    exit;
+}
+
+$userid = $_SESSION['userid'];
+
+if (!isset($_SESSION['fullname']) || !isset($_SESSION['profilepicture'])) {
+    // Fetch teacher details if not already in session
+    $sql = "SELECT profilepicture, fullname FROM teacher WHERE userid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $userid); // Ensure userid is integer
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        
+        // Store in session
+        $_SESSION['fullname'] = $row['fullname'];
+        
+        // Check if profile picture is available
+        if (!empty($row['profilepicture'])) {
+            $_SESSION['profilepicture'] = $row['profilepicture']; // Store file path or image data
+        } else {
+            $_SESSION['profilepicture'] = 'image/default.png'; // Default image
+        }
+    } else {
+        $_SESSION['fullname'] = 'Unknown User';
+        $_SESSION['profilepicture'] = 'image/default.png'; // Default image
     }
+    $stmt->close();
+}
+
+// Set variables for display
+$fullname = $_SESSION['fullname'];
+$profilePic = $_SESSION['profilepicture'];
+
+// If profile picture is stored as file path, display it as is
+if (isset($_SESSION['profilepicture']) && !empty($_SESSION['profilepicture'])) {
+    // Check if it is a valid image path
+    if (file_exists($_SESSION['profilepicture'])) {
+        $profilePic = $_SESSION['profilepicture'];
+    } else {
+        $profilePic = 'image/default.png'; // Default image if path is not valid
+    }
+} else {
+    $profilePic = 'image/default.png'; // Default image
+}
+
 ?>
 
 
@@ -29,8 +76,8 @@
         <!-- Sidebar -->
         <div class="bg-light border-end" id="sidebar-wrapper">
             <div class="sidebar-heading text-center py-4 primary-text"> 
-                <img src="../image/my pic.png" class="rounded-circle" width="80" alt="Profile Picture">
-                <h6>SAZID MAHMUD EMON KHAN</h6>
+            <img src="<?php echo htmlspecialchars($profilePic); ?>" class="rounded-circle" width="90" height="90" alt="Profile Picture">
+            <h6><?php echo htmlspecialchars($fullname); ?></h6>
             </div>
             <div class="list-group list-group-flush">
                 <a href="index.php" class="list-group-item list-group-item-action">Dashboard</a>
@@ -55,29 +102,29 @@
 
             <div class="container mt-4">
 
-                <div class="container">
-                    
-            <div class="form-container">
-            <h2 class="text-center">Update Your Password</h2>
-            <form>
-    <div class="mb-3">
-        <label for="name" class="form-label">Previous Password</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter your previous password" required>
-    </div>
-    <div class="mb-3">
-        <label for="name" class="form-label">New Password</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter your new password" required>
-    </div>
-    
-    <div class="text-center">
-        <button type="submit" class="btn btn-primary w-50">Update Password</button>
-    </div>
+<div class="container">
+<div class="form-container">
+<h2 class="text-center">Update Your Password</h2>
+<form method="POST" action="changepasshelper.php">
+<div class="mb-3">
+<label for="previous_password" class="form-label">Previous Password</label>
+<input type="password" class="form-control" name="previous_password" placeholder="Enter your previous password" required>
+</div>
+<div class="mb-3">
+<label for="new_password" class="form-label">New Password</label>
+<input type="password" class="form-control" name="new_password" placeholder="Enter your new password" required>
+</div>
+<div class="text-center">
+<button type="submit" class="btn btn-primary w-50">Update Password</button>
+</div>
 </form>
 
-        </div>
-                </div>
-                
-            </div>
+
+</div>
+</div>
+
+
+</div>
         </div>
     </div>
 </div>

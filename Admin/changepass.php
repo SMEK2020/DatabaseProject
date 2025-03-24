@@ -1,4 +1,84 @@
+<?php
+include('../connect.php');
 
+session_start();
+
+if( !isset($_SESSION['userid']) ){
+    header('location: ../Alogin.php');
+    exit;
+}
+
+$userid = $_SESSION['userid'];
+
+// Fetch admin details if not already in session
+if (!isset($_SESSION['fullname']) || !isset($_SESSION['profilepicture'])) {
+    $sql = "SELECT profilepicture, fullname FROM admin WHERE userid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $userid); // Ensure userid is an integer
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        
+        // Store in session
+        $_SESSION['fullname'] = $row['fullname'];
+        
+        // Check if profile picture is available
+        if (!empty($row['profilepicture'])) {
+            $_SESSION['profilepicture'] = $row['profilepicture']; // Store file path or image data
+        } else {
+            $_SESSION['profilepicture'] = 'image/default.png'; // Default image
+        }
+    } else {
+        $_SESSION['fullname'] = 'Unknown User';
+        $_SESSION['profilepicture'] = 'image/default.png'; // Default image
+    }
+    $stmt->close();
+}
+
+// Set variables for display
+$fullname = $_SESSION['fullname'];
+$profilePic = $_SESSION['profilepicture'];
+
+// If profile picture is stored as BLOB, display it properly
+if (isset($_SESSION['profilepicture']) && !empty($_SESSION['profilepicture'])) {
+    // Check if profile picture is stored as BLOB in the database
+    if (is_resource($_SESSION['profilepicture'])) {
+        // Output image data directly from BLOB
+        header("Content-type: image/jpeg"); // or the actual MIME type of the image
+        echo $_SESSION['profilepicture']; // Output the BLOB data
+        exit;
+    }
+    // If it is stored as a valid image path
+    if (file_exists($_SESSION['profilepicture'])) {
+        $profilePic = $_SESSION['profilepicture'];
+    } else {
+        $profilePic = 'image/default.png'; // Default image if path is not valid
+    }
+} else {
+    $profilePic = 'image/default.png'; // Default image
+}
+
+// Fetch admin ID
+$adminid = "";
+$sql_admin = "SELECT adminid FROM admin WHERE userid = ?";
+if ($stmt_admin = $conn->prepare($sql_admin)) {
+    $stmt_admin->bind_param("i", $userid);
+    $stmt_admin->execute();
+    $result_admin = $stmt_admin->get_result(); // Separate $result for admin info
+
+    if ($result_admin->num_rows == 1) {
+        $row_admin = $result_admin->fetch_assoc();
+        $adminid = $row_admin['adminid'];
+    }
+    $stmt_admin->close();
+} else {
+    // Output error if prepare fails
+    echo "Error preparing query: " . $conn->error;
+}
+
+?>
 
 
 
@@ -22,17 +102,20 @@
         <!-- Sidebar -->
         <div class="bg-light border-end" id="sidebar-wrapper">
             <div class="sidebar-heading text-center py-4 primary-text"> 
-                <img src="../image/my pic.png" class="rounded-circle" width="80" alt="Profile Picture">
-                <h6>SAZID MAHMUD EMON KHAN</h6>
+            <img src="<?php echo htmlspecialchars($profilePic); ?>" class="rounded-circle" width="90" height="90" alt="Profile Picture">
+            <h6><?php echo htmlspecialchars($fullname); ?></h6>
             </div>
             <div class="list-group list-group-flush">
-                <a href="index.php" class="list-group-item list-group-item-action">Dashboard</a>
+            <a href="index.php" class="list-group-item list-group-item-action">Dashboard</a>
                 <a href="updateprofile.php" class="list-group-item list-group-item-action">Update Profile</a>
-                <a href="dailyattendance.php" class="list-group-item list-group-item-action  ">Daily Attendance</a>
-                <a href="giveinmark.php" class="list-group-item list-group-item-action  ">InCourse Mark</a>
-                
-                
-                <a href="changepass.php" class="list-group-item list-group-item-action  active">Change Password</a>
+                <a href="finalmark.php" class="list-group-item list-group-item-action">Input Final Mark</a>
+                <a href="enroll.php" class="list-group-item list-group-item-action">Enroll Course</a>
+                <a href="newadminregister.php" class="list-group-item list-group-item-action ">Admin Registration</a>
+                <a href="newtearegister.php" class="list-group-item list-group-item-action">Teacher Registration</a>
+                <a href="newsturegister.php" class="list-group-item list-group-item-action">Student Registration</a>
+                <a href="certificaterequest.php" class="list-group-item list-group-item-action">Crrtificate Approval</a>
+                <a href="resultpublish.php" class="list-group-item list-group-item-action">Result Publish</a>
+                <a href="#" class="list-group-item list-group-item-action active">Change Password</a>
                 <a href="logouthelper.php" class="list-group-item list-group-item-action">Logout</a>
             </div>
         </div>
@@ -49,26 +132,26 @@
             <div class="container mt-4">
 
                 <div class="container">
-                    
-            <div class="form-container">
+                <div class="form-container">
             <h2 class="text-center">Update Your Password</h2>
-            <form>
+            <form method="POST" action="changepasshelper.php">
     <div class="mb-3">
-        <label for="name" class="form-label">Previous Password</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter your previous password" required>
+        <label for="previous_password" class="form-label">Previous Password</label>
+        <input type="password" class="form-control" name="previous_password" placeholder="Enter your previous password" required>
     </div>
     <div class="mb-3">
-        <label for="name" class="form-label">New Password</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter your new password" required>
+        <label for="new_password" class="form-label">New Password</label>
+        <input type="password" class="form-control" name="new_password" placeholder="Enter your new password" required>
     </div>
-    
     <div class="text-center">
         <button type="submit" class="btn btn-primary w-50">Update Password</button>
     </div>
 </form>
 
+
         </div>
                 </div>
+
                 
             </div>
         </div>

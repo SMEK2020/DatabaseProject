@@ -1,10 +1,39 @@
 <?php
-    include('../connect.php');
-    session_start();
-    if( !isset($_SESSION['id'])  ){
-        header('location: Slogin.php');
-        exit;
+include('../connect.php');
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    header('location: Slogin.php');
+    exit;
+}
+
+if (!isset($_SESSION['fullname']) || !isset($_SESSION['profilepicture'])) {
+    // Fetch student details if not already in session
+    $sql = "SELECT profilepicture, fullname FROM student WHERE userid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $userid);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        
+        // Store in session
+        $_SESSION['fullname'] = $row['fullname'];
+        $_SESSION['profilepicture'] = !empty($row['profilepicture']) ? $row['profilepicture'] : 'image/default.png';
+    } else {
+        $_SESSION['fullname'] = 'Unknown User';
+        $_SESSION['profilepicture'] = 'image/default.png'; // Default image
     }
+    $stmt->close();
+}
+
+$fullname = $_SESSION['fullname'];
+$profilePic = $_SESSION['profilepicture'];
+
+
+
+
 ?>
 
 
@@ -29,16 +58,17 @@
         <!-- Sidebar -->
         <div class="bg-light border-end" id="sidebar-wrapper">
             <div class="sidebar-heading text-center py-4 primary-text"> 
-                <img src="../image/my pic.png" class="rounded-circle" width="80" alt="Profile Picture">
-                <h6>SAZID MAHMUD EMON KHAN</h6>
+            <img src="<?php echo htmlspecialchars($profilePic); ?>" class="rounded-circle" width="90" height="90" alt="Profile Picture">
+            <h6><?php echo htmlspecialchars($fullname); ?></h6>
             </div>
             <div class="list-group list-group-flush">
-                <a href="dashboard.php" class="list-group-item list-group-item-action">Dashboard</a>
+                <a href="index.php" class="list-group-item list-group-item-action">Dashboard</a>
                 <a href="updateprofile.php" class="list-group-item list-group-item-action">Update Profile</a>
                 <a href="downloadresult.php" class="list-group-item list-group-item-action">Download Result</a>
                 <a href="dailyattendance.php" class="list-group-item list-group-item-action">Daily Attendance</a>
                 <a href="incourse.php" class="list-group-item list-group-item-action">InCourse Mark</a>
                 <a href="certificaterequest.php" class="list-group-item list-group-item-action">Certificate Application</a>
+                <a href="retake.php" class="list-group-item list-group-item-action">Retake/Improvement Course</a>
                 <a href="changepass.php" class="list-group-item list-group-item-action  active">Change Password</a>
                 <a href="logouthelper.php" class="list-group-item list-group-item-action">Logout</a>
             </div>
@@ -56,26 +86,26 @@
             <div class="container mt-4">
 
                 <div class="container">
-                    
-            <div class="form-container">
+                <div class="form-container">
             <h2 class="text-center">Update Your Password</h2>
-            <form>
+            <form method="POST" action="changepasshelper.php">
     <div class="mb-3">
-        <label for="name" class="form-label">Previous Password</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter your previous password" required>
+        <label for="previous_password" class="form-label">Previous Password</label>
+        <input type="password" class="form-control" name="previous_password" placeholder="Enter your previous password" required>
     </div>
     <div class="mb-3">
-        <label for="name" class="form-label">New Password</label>
-        <input type="text" class="form-control" id="name" placeholder="Enter your new password" required>
+        <label for="new_password" class="form-label">New Password</label>
+        <input type="password" class="form-control" name="new_password" placeholder="Enter your new password" required>
     </div>
-    
     <div class="text-center">
         <button type="submit" class="btn btn-primary w-50">Update Password</button>
     </div>
 </form>
 
+
         </div>
                 </div>
+
                 
             </div>
         </div>

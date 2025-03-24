@@ -1,53 +1,117 @@
 <?php
-include('../config.php'); // Database Connection File
+include('../connect.php');
 session_start();
 
-// Check if user is logged in
-if (!isset($_SESSION['id'])) {
+if (!isset($_SESSION['userid'])) {
     header('location: Slogin.php');
     exit;
 }
 
-$student_id = $_SESSION['id']; // Current logged-in student ID
+// Fetch student details if not already in session
+if (!isset($_SESSION['studentid']) || !isset($_SESSION['fullname']) || !isset($_SESSION['profilepicture'])) {
+    $userid = $_SESSION['userid'];
+    $sql = "SELECT studentid, profilepicture, fullname FROM student WHERE userid=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $userid);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-// Handle Certificate Request Submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $certificate_type = $_POST['certificate_type'];
-    $reason = $_POST['reason'];
-
-    // Check if a pending request already exists
-    $checkQuery = $conn->prepare("SELECT * FROM certificate_requests WHERE student_id = ? AND status = 'Pending'");
-    $checkQuery->bind_param("i", $student_id);
-    $checkQuery->execute();
-    $result = $checkQuery->get_result();
-
-    if ($result->num_rows == 0) {
-        // Insert new request only if no pending request exists
-        $stmt = $conn->prepare("INSERT INTO certificate_requests (student_id, certificate_type, reason, status, request_date) VALUES (?, ?, ?, 'Pending', NOW())");
-
-        if ($stmt === false) {
-            die("SQL Error: " . $conn->error);
-        }
-
-        $stmt->bind_param("iss", $student_id, $certificate_type, $reason);
-
-        if ($stmt->execute()) {
-            $success_message = "Certificate request submitted successfully!";
-        } else {
-            $error_message = "Error: " . $stmt->error;
-        }
-
-        $stmt->close();
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $_SESSION['studentid'] = $row['studentid']; 
+        $_SESSION['fullname'] = $row['fullname'];
+        $_SESSION['profilepicture'] = !empty($row['profilepicture']) ? $row['profilepicture'] : 'image/default.png';
     } else {
-        $error_message = "You already have a pending request. Wait for approval or rejection before submitting another.";
+        $_SESSION['fullname'] = 'Unknown User';
+        $_SESSION['profilepicture'] = 'image/default.png';
     }
+    $stmt->close();
 }
 
-// Fetch previous certificate requests
-$result = $conn->prepare("SELECT id, certificate_type, status, request_date FROM certificate_requests WHERE student_id = ?");
-$result->bind_param("i", $student_id);
-$result->execute();
-$requests = $result->get_result();
+
+$fullname = $_SESSION['fullname'];
+$profilePic = $_SESSION['profilepicture'];
+$studentid = $_SESSION['studentid']; // Student ID from session
+
+// Process certificate request form submission
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['certificate_type']) && isset($_POST['reason'])) {
+    $requestdate = date('Y-m-d');
+    $type = $_POST['certificate_type'];
+    $reason = $_POST['reason'];
+    
+    $check_table = "SHOW TABLES LIKE 'certificaterequest'";
+    $table_result = $conn->query($check_table);
+    
+    if ($table_result->num_rows == 0) {
+        $error_message = "Error: Table 'certificaterequest' doesn't exist.";
+        echo "<script>alert('$error_message'); window.location.href='certificaterequest.php';</script>";
+        exit();
+    } else {
+        // Check if there is an existing pending request for the same certificate type
+        $check_existing = "SELECT * FROM certificaterequest WHERE studentid = '$studentid' AND type = '$type' AND status = 'pending'";
+        $existing_request = $conn->query($check_existing);
+        
+        if ($existing_request->num_rows > 0) {
+            $error_message = "You already have a pending request for this certificate type.";
+            echo "<script>alert('$error_message'); window.location.href='certificaterequest.php';</script>";
+            exit();
+        } else {
+            // If no existing request, insert the new request
+            $insert_sql = "INSERT INTO certificaterequest (studentid, requestdate, type, reason, status) 
+                           VALUES ('$studentid', '$requestdate', '$type', '$reason', 'pending')";
+            
+            if ($conn->query($insert_sql)) {
+                $success_message = "Certificate request submitted successfully!";
+                echo "<script>alert('$success_message'); window.location.href='certificaterequest.php';</script>";
+                exit();
+            } else {
+                $error_message = "Error submitting request.";
+                echo "<script>alert('$error_message'); window.location.href='certificaterequest.php';</script>";
+                exit();
+            }
+        }
+    }
+}
+$fetch_requests = "
+    SELECT cr.studentid, cr.requestdate, cr.type AS type, cr.status, 
+           CONCAT(cr.studentid, '_', cr.requestdate) AS id, c.pdf_path
+    FROM certificaterequest cr
+    LEFT JOIN certificates c 
+        ON cr.studentid = c.studentid 
+        AND DATE(cr.requestdate) = DATE(c.created_at)
+        AND cr.type = c.type
+    WHERE cr.studentid = '$studentid'
+    ORDER BY cr.requestdate DESC
+";
+
+$requests = $conn->query($fetch_requests);
+
+if (!$requests) {
+    $error_message = "Error fetching requests: " . $conn->error;
+    $requests = new class {
+        public function fetch_assoc() { return null; }
+        public function num_rows() { return 0; }
+    };
+}
+
+while ($row = $requests->fetch_assoc()) {
+    // Check if type is set in the row
+    if (isset($row['type']) && !empty($row['type'])) {
+        $certificate_type = $row['type'];
+    } else {
+        $certificate_type = 'Not Available'; // Handle case when type is not available
+    }
+
+    // Check if pdf_path is set
+    if (isset($row['pdf_path']) && !empty($row['pdf_path'])) {
+        $pdf_path = $row['pdf_path'];
+    } else {
+        $pdf_path = 'Not Available'; // Handle case when pdf_path is not available
+    }
+
+    // echo "Certificate Type: " . htmlspecialchars($certificate_type) . "<br>";
+    // echo "PDF Path: " . htmlspecialchars($pdf_path) . "<br>";
+}
 ?>
 
 <!DOCTYPE html>
@@ -67,8 +131,8 @@ $requests = $result->get_result();
     <!-- Sidebar -->
     <div class="bg-light border-end" id="sidebar-wrapper">
         <div class="sidebar-heading text-center py-4 primary-text"> 
-            <img src="../image/my pic.png" class="rounded-circle" width="80" alt="Profile Picture">
-            <h6>SAZID MAHMUD EMON KHAN</h6>
+        <img src="<?php echo htmlspecialchars($profilePic); ?>" class="rounded-circle" width="90" height="90" alt="Profile Picture">
+        <h6><?php echo htmlspecialchars($fullname); ?></h6>
         </div>
         <div class="list-group list-group-flush">
             <a href="index.php" class="list-group-item list-group-item-action">Dashboard</a>
@@ -77,6 +141,7 @@ $requests = $result->get_result();
             <a href="dailyattendance.php" class="list-group-item list-group-item-action">Daily Attendance</a>
             <a href="incourse.php" class="list-group-item list-group-item-action">InCourse Mark</a>
             <a href="certificaterequest.php" class="list-group-item list-group-item-action active">Certificate Application</a>
+            <a href="retake.php" class="list-group-item list-group-item-action">Retake/Improvement Course</a>
             <a href="changepass.php" class="list-group-item list-group-item-action">Change Password</a>
             <a href="logouthelper.php" class="list-group-item list-group-item-action">Logout</a>
         </div>
@@ -90,76 +155,59 @@ $requests = $result->get_result();
                 <h5 class="m-0">Bangabandhu Sheikh Mujibur Rahman University, Kishoreganj</h5>
             </div>
         </nav>
+   <div class="container mt-4">
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center">Certificate Request</h2>
 
-        <div class="container mt-4">
-            <div class="container">
-                <div class="form-container">
-                    <h2 class="text-center">Certificate Request</h2>
+            <!-- Success/Error Messages -->
+            <?php if (isset($success_message)) { ?>
+                <div class="alert alert-success" role="alert">
+                    <?php echo $success_message; ?>
+                </div>
+            <?php } ?>
+            <?php if (isset($error_message)) { ?>
+                <div class="alert alert-danger" role="alert">
+                    <?php echo $error_message; ?>
+                </div>
+            <?php } ?>
 
-                    <!-- Success/Error Messages -->
-                    <?php if (isset($success_message)) echo "<div class='alert alert-success'>$success_message</div>"; ?>
-                    <?php if (isset($error_message)) echo "<div class='alert alert-danger'>$error_message</div>"; ?>
+            <form method="POST">
+                <h5>Certificate Type:</h5>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="certificate_type" value="Attestation Certificate" id="attestation" required>
+                    <label class="form-check-label" for="attestation">
+                        Attestation Certificate
+                    </label>
+                </div>
+                <!-- <div class="form-check">
+                    <input class="form-check-input" type="radio" name="certificate_type" value="Testimonial Certificate" id="testimonial">
+                    <label class="form-check-label" for="testimonial">
+                        Testimonial Certificate
+                    </label>
+                </div><br> -->
 
-                    <form method="POST">
-                        <h5>Certificate Type:</h5>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="certificate_type" value="Attestation Certificate" id="attestation" required>
-                            <label class="form-check-label" for="attestation">
-                                Attestation Certificate
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="certificate_type" value="Testimonial Certificate" id="testimonial">
-                            <label class="form-check-label" for="testimonial">
-                                Testimonial Certificate
-                            </label>
-                        </div><br>
-
-                        <div class="mb-3">
-                            <textarea class="form-control" name="reason" rows="3" placeholder="Write the reason for requesting the certificate..." required></textarea>
-                        </div>
-
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary w-50">Send Request</button>
-                        </div>
-                    </form>
+                <div class="mb-3">
+                    <textarea class="form-control" name="reason" rows="3" placeholder="Write the reason for requesting the certificate..." required></textarea>
                 </div>
 
-                <!-- Previous Requests Table -->
-                <h3 class="mt-5">Your Previous Requests</h3>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Serial No.</th>
-                            <th>Certificate Type</th>
-                            <th>Status</th>
-                            <th>Request Date</th>
-                            <th style="text-align: center;">Download</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $serial = 1; while ($row = $requests->fetch_assoc()) { ?>
-                            <tr>
-                                <th scope="row"><?= $serial++; ?></th>
-                                <td><?= $row['certificate_type']; ?></td>
-                                <td><?= $row['status']; ?></td>
-                                <td><?= $row['request_date']; ?></td>
-                                <td style="text-align: center;">
-                                    <?php if ($row['status'] == 'Approved') { ?>
-                                        <a href="download_certificate.php?id=<?= $row['id']; ?>" class="btn btn-success btn-sm">
-                                            <i class="fa-solid fa-download"></i> Download
-                                        </a>
-                                    <?php } else { ?>
-                                        <span class="text-muted">Not Available</span>
-                                    <?php } ?>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-
-            </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary w-50">Send Request</button>
+                </div>
+            </form>
         </div>
+
+        <!-- Previous Requests Table -->
+        
+
+    </div>
+</div>
+<div class="text-center mt-4">
+            <a href="previous_requests.php" class="btn btn-secondary">View Previous Requests</a>
+        </div>
+    
+
+
     </div>
 </div>
 

@@ -1,11 +1,94 @@
 <?php
-    include('../connect.php');
-    session_start();
-    if( !isset($_SESSION['id'])  ){
-        header('location: Slogin.php');
-        exit;
+include('../connect.php');
+session_start();
+
+if (!isset($_SESSION['userid'])) {
+    header('location: Slogin.php');
+    exit;
+}
+
+if (!isset($_SESSION['fullname']) || !isset($_SESSION['profilepicture'])) {
+    // Fetch student details if not already in session
+    $userid = $_SESSION['userid'];  // Make sure $userid is set
+    $sql = "SELECT profilepicture, fullname FROM student WHERE userid=?";
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        die("Error preparing the SQL statement: " . $conn->error);
     }
+    $stmt->bind_param("i", $userid);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        
+        // Store in session
+        $_SESSION['fullname'] = $row['fullname'];
+        $_SESSION['profilepicture'] = !empty($row['profilepicture']) ? $row['profilepicture'] : 'image/default.png';
+    } else {
+        $_SESSION['fullname'] = 'Unknown User';
+        $_SESSION['profilepicture'] = 'image/default.png'; // Default image
+    }
+    $stmt->close();
+}
+
+$fullname = $_SESSION['fullname'];
+$profilePic = $_SESSION['profilepicture'];
+
+// Fetch studentid from student table based on the logged-in user's userid
+$userid = $_SESSION['userid'];  // Assuming 'userid' is stored in the session after login
+
+// Query to get the studentid from the student table
+$query = "SELECT studentid FROM student WHERE userid = ?";
+$stmt = $conn->prepare($query);
+if (!$stmt) {
+    die("Error preparing the SQL statement: " . $conn->error);
+}
+$stmt->bind_param("i", $userid);  // 'i' for integer (assuming userid is integer)
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check if studentid exists
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $studentid = $row['studentid'];  // Fetch studentid from the result
+} else {
+    echo "Student ID not found!";
+    exit;
+}
+
+$stmt->close();
+
+// Fetching the data from the cgpa and reshis tables for the specific student
+$query = "SELECT c.semid, r.date AS publish_date, c.file_path, c.cgpa
+          FROM cgpa c
+          JOIN reshis r ON c.studentid = r.studentid 
+          WHERE c.studentid = ?
+          ORDER BY r.date DESC";
+
+$stmt = $conn->prepare($query);
+if (!$stmt) {
+    die("Error preparing the SQL statement: " . $conn->error);  // Check for SQL preparation error
+}
+$stmt->bind_param("s", $studentid);  // 's' for string because studentid is varchar
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Check for SQL error
+if (!$result) {
+    die("Error executing query: " . $conn->error);
+}
+
+
+
+$stmt->close();
+$conn->close();
 ?>
+
+
+
+
+
 
 
 
@@ -31,8 +114,8 @@
         <!-- Sidebar -->
         <div class="bg-light border-end" id="sidebar-wrapper">
             <div class="sidebar-heading text-center py-4 primary-text"> 
-                <img src="../image/my pic.png" class="rounded-circle" width="80" alt="Profile Picture">
-                <h6>SAZID MAHMUD EMON KHAN</h6>
+            <img src="<?php echo htmlspecialchars($profilePic); ?>" class="rounded-circle" width="90" height="90" alt="Profile Picture">
+<h6><?php echo htmlspecialchars($fullname); ?></h6>
             </div>
             <div class="list-group list-group-flush">
                 <a href="index.php" class="list-group-item list-group-item-action">Dashboard</a>
@@ -41,6 +124,7 @@
                 <a href="dailyattendance.php" class="list-group-item list-group-item-action">Daily Attendance</a>
                 <a href="incourse.php" class="list-group-item list-group-item-action">InCourse Mark</a>
                 <a href="certificaterequest.php" class="list-group-item list-group-item-action">Certificate Application</a>
+                <a href="retake.php" class="list-group-item list-group-item-action">Retake/Improvement Course</a>
                 <a href="changepass.php" class="list-group-item list-group-item-action">Change Password</a>
                 <a href="logouthelper.php" class="list-group-item list-group-item-action">Logout</a>
             </div>
@@ -58,56 +142,65 @@
             <div class="container mt-4">
             <div class="container">
             <h2 class="text-center">Download Result</h2><br><br>
-            <table class="table table-hover">
+            <?php
+// Check for SQL error
+if (!$result) {
+    die("Error executing query: " . $conn->error);
+}
+
+if ($result->num_rows > 0) {
+    echo '<table class="table table-hover">
             <thead>
-    <tr>
-      <th scope="col">Serial No.</th>
-      <th scope="col">Semester</th>
-      <th scope="col">Published Date</th>
-      <th style="text-align: center;">
+                <tr>
+                    <th scope="col">Serial No.</th>
+                    <th scope="col">Semester</th>
+                    <th scope="col">Published Date</th>
+                    <th style="text-align: center;">Download</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+    $serialNo = 1;
+    $baseUrl = 'http://localhost/Database/result/';  // আপনার লোকাল হোস্ট ডিরেক্টরি পাথ
+    while ($row = $result->fetch_assoc()) {
+        $semid = $row['semid'];
+        $publishDate = date("d F, Y", strtotime($row['publish_date']));
+        
+        $filePathFull = $row['file_path'];  // Full file system path
+        $filePathFull = str_replace('\\', '/', $filePathFull);  // Ensure forward slashes
     
-        Download
+        $relativePath = str_replace("C:/xampp/htdocs/", "", $filePathFull);  
+        $fileUrl = "http://localhost/" . $relativePath;
     
-</th>
-
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>1st Year 1st</td>
-      <td>30 November,2023</td>
-      <td style="text-align: center;">
-    <a href="#" style="display: inline-block;">
+        $semesterName = "Semester " . $semid;
+    
+        echo '<tr>
+                <th scope="row">' . $serialNo++ . '</th>
+                <td>' . $semesterName . '</td>
+                <td>' . $publishDate . '</td>
+                <td style="text-align: center;">
+    <a href="' . $fileUrl . '" download style="display: inline-block;">
         <i class="fa-solid fa-download"></i>
     </a>
 </td>
 
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>1st Year 2nd</td>
-      <td>24 June,2024</td>
-      <td style="text-align: center;">
-    <a href="#" style="display: inline-block;">
-        <i class="fa-solid fa-download"></i>
-    </a>
-</td>
+              </tr>';
+    }
+    
+    
 
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>2nd Year 1st</td>
-      <td >30 January,2025</td>
-      <td style="text-align: center;">
-    <a href="#" style="display: inline-block;">
-        <i class="fa-solid fa-download"></i>
-    </a>
-</td>
+    echo '</tbody>
+        </table>';
+} else {
+    echo "<script>
+    alert('No Result Found');
+    window.location.href = document.referrer;  // Redirects to the previous page
+  </script>";
+}
+?>
 
-    </tr>
-  </tbody>
-            </table>
+
+
             </div>
                 
             </div>

@@ -42,48 +42,171 @@
     <!-- Navbar Start -->
     <div class="container-fluid bg-white sticky-top">
         <div class="container">
-            <nav class="navbar navbar-expand-lg bg-white navbar-light py-2 py-lg-0">
-                <a href="index.html" class="navbar-brand">
-                    <img class="img-fluid" src="image/favicon.png" alt="Logo">
-                </a>
-                <button type="button" class="navbar-toggler ms-auto me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                    
-                    <div class="navbar-nav ms-auto">
-                        <a href="index.html" class="nav-item nav-link active">Home</a>
-                        <a href="#" class="nav-item nav-link">About</a>
-                        <a href="#" class="nav-item nav-link">Notice</a>
-                       
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Academic</a>
-                            <div class="dropdown-menu bg-light rounded-0 m-0">
-                                <a href="#" class="dropdown-item">Syllebus</a>
-                                <a href="#" class="dropdown-item">Courses</a>
-                                <a href="#" class="dropdown-item">Question Bank</a>
-                                
-                            </div>
-                        </div>
-                        <a href="#" class="nav-item nav-link">Contact</a>
-                    </div>
-                    <div class="border-start ps-4 d-none d-lg-block">
-                        <button type="button" class="btn btn-sm p-0"><i class="fa fa-search"><a href="validity.php">Validity Check</a></i></button>
-                    </div>
+        <nav class="navbar navbar-expand-lg bg-white navbar-light py-2 py-lg-0">
+        <a href="index.php" class="navbar-brand d-flex align-items-center">
+    <img class="img-fluid" src="image/favicon.png" alt="Logo" style="height: auto; width: auto;">
+    
+    <!-- For small and medium screens -->
+    <div class="d-block d-lg-none text-center py-0 d-flex" style="margin-top: -40px;">
+    <img src="image/bsmru_logo_text_red.png" alt="Bangabandhu Logo" style="height: 50px; width: auto; margin-top: 0;">
+</div>
+
+</a>
+
+    <button type="button" class="navbar-toggler ms-auto me-0" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav ms-auto">
+            <a href="index.php" class="nav-item nav-link active">Home</a>
+            <a href="#" class="nav-item nav-link">About</a>
+            <a href="#" class="nav-item nav-link">Notice</a>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Academic</a>
+                <div class="dropdown-menu bg-light rounded-0 m-0">
+                    <a href="#" class="dropdown-item">Syllebus</a>
+                    <a href="#" class="dropdown-item">Courses</a>
+                    <a href="#" class="dropdown-item">Question Bank</a>
                 </div>
-            </nav>
+            </div>
+            <a href="#" class="nav-item nav-link">Contact</a>
+        </div>
+        <div class="border-start ps-4 d-none d-lg-block">
+            <button type="button" class="btn btn-sm p-0"><i class="fa fa-search"><a href="validity.php">Validity Check</a></i></button>
+        </div>
+    </div>
+    <!-- For small and medium screens -->
+    
+</nav>
+
+
+
+
         </div>
     </div>
     
     <!-- Navbar End -->
 
+<!-- Carousel Start -->
+<div id="carouselExample" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+  <div class="carousel-inner">
+    <!-- Carousel Item 1 -->
+    <div class="carousel-item active">
+      <div class="back-img" style="background-image: url('image/car-2.jpg'); background-size: cover;">
+      <div class="carousel-caption d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <h1 style="
+      color: white;
+      padding: 20px;
+      margin: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 10px;
+      display: inline-block;
+    ">
+        DEPARTMENT OF<br> COMPUTER SCIENCE AND ENGINEERING
+    </h1>
+</div>
 
-    <!-- Carousel Start -->
-    <div class="back-img" style="background-image: url('image/carousel-1.jpg');background-size: cover;">
-        <marquee><h1>WELCOME TO DEPT. OF COMPUTER SCIENCE AND ENGINEERING</h1></marquee>
-
+      </div>
     </div>
+    <!-- Carousel Item 2 -->
+    <div class="carousel-item">
+      <div class="back-img" style="background-image: url('image/car-1.jpg'); background-size: cover;">
+      <div class="carousel-caption d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <h1 style="
+      color: white;
+      padding: 20px;
+      margin: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 10px;
+      display: inline-block;
+    ">
+        DEPARTMENT OF<br> COMPUTER SCIENCE AND ENGINEERING
+    </h1>
+</div>
+
+      </div>
+    </div>
+    <!-- Carousel Item 3 -->
+    <div class="carousel-item">
+      <div class="back-img" style="background-image: url('image/car-3.jpg'); background-size: cover;">
+      <div class="carousel-caption d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <h1 style="
+      color: white;
+      padding: 20px;
+      margin: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 10px;
+      display: inline-block;
+    ">
+        DEPARTMENT OF<br> COMPUTER SCIENCE AND ENGINEERING
+    </h1>
+</div>
+
+      </div>
+    </div>
+    <!-- Carousel Item 4 -->
+    <div class="carousel-item">
+      <div class="back-img" style="background-image: url('image/car-4.jpg'); background-size: cover;">
+      <div class="carousel-caption d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <h1 style="
+      color: white;
+      padding: 20px;
+      margin: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 10px;
+      display: inline-block;
+    ">
+        DEPARTMENT OF<br> COMPUTER SCIENCE AND ENGINEERING
+    </h1>
+</div>
+
+      </div>
+    </div>
+    <!-- Carousel Item 5 -->
+    <div class="carousel-item">
+      <div class="back-img" style="background-image: url('image/car-5.jpg'); background-size: cover;">
+      <div class="carousel-caption d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <h1 style="
+      color: white;
+      padding: 20px;
+      margin: 0;
+      background-color: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 10px;
+      display: inline-block;
+    ">
+        DEPARTMENT OF<br> COMPUTER SCIENCE AND ENGINEERING
+    </h1>
+</div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Carousel Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+<!-- Carousel End -->
+
+
+
     
 
     <!-- Article Start -->
@@ -121,43 +244,76 @@
 
     <!-- Products Start -->
     <div class="container-fluid product py-5 my-5">
-        <div class="container py-5">
-            <div class="section-title text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
-                
-                <h1 class="display-6 ">Event Section</h1>
-            </div>
-            <div class="owl-carousel product-carousel wow fadeInUp" data-wow-delay="0.5s">
-                <a href="" class="d-block product-item rounded">
-                    <img src="image/csefest2024.jpg" alt="">
-                    <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
-                        <h4 class="text-primary">CSE FEST 2024</h4>
-                        <span class="text-body">Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum</span>
-                    </div>
-                </a>
-                <a href="" class="d-block product-item rounded">
-                    <img src="image/ideacon.jpg" alt="">
-                    <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
-                        <h4 class="text-primary">IDEA CONTEST 2024</h4>
-                        <span class="text-body">Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum</span>
-                    </div>
-                </a>
-                <a href="" class="d-block product-item rounded">
-                    <img src="image/quizcon.jpg" alt="">
-                    <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
-                        <h4 class="text-primary">QUIZ CONTEST 2024</h4>
-                        <span class="text-body">Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum</span>
-                    </div>
-                </a>
-                <a href="" class="d-block product-item rounded">
-                    <img src="image/idpc.jpg" alt="">
-                    <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
-                        <h4 class="text-primary">IDPC 2024</h4>
-                        <span class="text-body">Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum</span>
-                    </div>
-                </a>
-            </div>
+    <div class="container py-5">
+        <div class="section-title text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 500px;">
+            <h1 class="display-6">Event Section</h1>
+        </div>
+        <div class="owl-carousel product-carousel wow fadeInUp" data-wow-delay="0.5s">
+            <!-- Existing Event 2 -->
+            <a href="" class="d-block product-item rounded">
+                <img src="image/ideacon.jpg" alt="">
+                <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
+                    <h4 class="text-primary">IDEA CONTEST 2024</h4>
+                    <span class="text-body">Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum</span>
+                </div>
+            </a>
+            <!-- Existing Event 3 -->
+            <a href="" class="d-block product-item rounded">
+                <img src="image/quizcon.jpg" alt="">
+                <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
+                    <h4 class="text-primary">QUIZ CONTEST 2024</h4>
+                    <span class="text-body">Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum</span>
+                </div>
+            </a>
+            <!-- Existing Event 4 -->
+            <a href="" class="d-block product-item rounded">
+                <img src="image/idpc.jpg" alt="">
+                <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
+                    <h4 class="text-primary">IDPC 2024</h4>
+                    <span class="text-body">Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum</span>
+                </div>
+            </a>
+             <!-- New Event 2 -->
+             <a href="" class="d-block product-item rounded">
+                <img src="image/event-3.jpg" alt="">
+                <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
+                    <h4 class="text-primary">WORKSHOP ON HACKATHON</h4>
+                    <span class="text-body"></span>
+                </div>
+            </a>
+         <!-- New Event 1 -->
+         <a href="" class="d-block product-item rounded">
+                <img src="image/event-2.jpg" alt="">
+                <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
+                    <h4 class="text-primary">INOGURATION CEREMONY OF CSE FEST-2024</h4>
+                    <span class="text-body"></span>
+                </div>
+            </a>
+        <!-- New Event 3 -->
+        <a href="" class="d-block product-item rounded">
+                <img src="image/event-1.jpg" alt="">
+                <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
+                    <h4 class="text-primary">PRIZE GIVING CEREMONY OF CSE FEST-2024</h4>
+                    <span class="text-body"></span>
+                </div>
+            </a>
+            <!-- Existing Event 1 -->
+            <a href="" class="d-block product-item rounded">
+                <img src="image/csefest2024.jpg" alt="">
+                <div class="bg-white shadow-sm text-center p-4 position-relative mt-n5 mx-4">
+                    <h4 class="text-primary">CSE FEST 2024</h4>
+                    <span class="text-body">Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum</span>
+                </div>
+            </a>
+            
+
+           
+           
+            
         </div>
     </div>
+</div>
+
     <!-- Products End -->
 
 
@@ -181,8 +337,8 @@
                         <small>Chairman</small>
                         <div class="d-flex justify-content-center mt-3">
                             <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-phone-alt"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-envelope"></i></a>
                         </div>
                     </div>
                 </div>
@@ -200,8 +356,8 @@
                         <small>Lecturer</small>
                         <div class="d-flex justify-content-center mt-3">
                             <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-phone-alt"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-envelope"></i></a>
                         </div>
                     </div>
                 </div>
@@ -214,8 +370,8 @@
                         <small>Lecturer</small>
                         <div class="d-flex justify-content-center mt-3">
                             <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-phone-alt"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-envelope"></i></a>
                         </div>
                     </div>
                 </div>
@@ -228,8 +384,8 @@
                         <small>Lecturer</small>
                         <div class="d-flex justify-content-center mt-3">
                             <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-phone-alt"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-envelope"></i></a>
                         </div>
                     </div>
                 </div>
@@ -244,8 +400,8 @@
                         <small>Lecturer</small>
                         <div class="d-flex justify-content-center mt-3">
                             <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-phone-alt"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-envelope"></i></a>
                         </div>
                     </div>
                 </div>
@@ -258,8 +414,8 @@
                         <small>Lecturer</small>
                         <div class="d-flex justify-content-center mt-3">
                             <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-phone-alt"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-envelope"></i></a>
                         </div>
                     </div>
                 </div>
@@ -272,8 +428,8 @@
                         <small>Lecturer</small>
                         <div class="d-flex justify-content-center mt-3">
                             <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-phone-alt"></i></a>
+                            <a class="btn btn-square btn-primary mx-1" href=""><i class="fa fa-envelope"></i></a>
                         </div>
                     </div>
                 </div>

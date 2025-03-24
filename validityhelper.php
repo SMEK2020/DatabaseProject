@@ -1,40 +1,77 @@
 <?php
+// Enable full error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
+// Include database connection
+include('connect.php');
+session_start();
+
+// Debugging: Check if form data is being submitted
+//echo "<pre>";
+var_dump($_POST);  // Check if the form is sending data
+//echo "</pre>";
+
+// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Database connection parameters
-    $servername = "localhost"; // Change this if necessary
-    $username = "root"; // Change to your database username
-    $password = ""; // Change to your database password
-    $dbname = "sms"; // Change to your database name
+    // Check if 'e' is set in POST
+    if (isset($_POST['e']) && !empty($_POST['e'])) {
+        // Get the entered ID from the form
+        $entered_id = $_POST['e'];
 
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
+        // Debugging: Check if ID is being received
+        //echo "Entered ID: " . $entered_id . "<br>";
 
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+        // Query to match the entered ID with the unique_id in the certificates table
+        $sql = "SELECT s.studentid, s.fullname, c.unique_id FROM certificates c
+                JOIN student s ON c.studentid = s.studentid
+                WHERE c.unique_id = ?";
 
-    // Retrieve and sanitize user input
-    $id = trim($_POST['id']);
-    $date = trim($_POST['d']);
+        // Debugging: Show the query to ensure it's correct
+        //echo "SQL Query: " . $sql . "<br>";
 
-    $id = $conn->real_escape_string($id);
-    $date = $conn->real_escape_string($date);
+        // Prepare and bind the statement
+        if ($stmt = $conn->prepare($sql)) {
+            $stmt->bind_param("s", $entered_id); // Bind the entered ID to the query
 
-    // Query the database
-    $sql = "SELECT * FROM validity WHERE certificateid = '$id' AND date = '$date'";
-    $result = $conn->query($sql);
+            // Execute the query
+            if ($stmt->execute()) {
+                // Debugging: If execution is successful
+                //echo "Query executed successfully.<br>";
+                
+                // Get the result
+                $result = $stmt->get_result();
 
-    if ($result->num_rows > 0) {
-        echo "<script>alert('Valid Data!'); window.location.href='index.php';</script>";
+                // Check if we found any matching record
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    // Match found, show valid message
+                    $student_id = $row['studentid'];
+                    $student_name = $row['fullname'];
+                    echo "<script>alert('Valid! Student ID: $student_id, Name: $student_name'); window.location.href = 'validity.php';</script>";
+                } else {
+                    // No match found, show invalid message
+                    echo "<script>alert('Invalid! No record found for the entered ID.'); window.location.href = 'validity.php';</script>";
+                }
+            } else {
+                // If query execution failed
+                //echo "Error executing query: " . $stmt->error . "<br>";
+                echo "<script>alert('Error: Unable to process the request.'); window.location.href = 'validity.php';</script>";
+            }
+
+            // Close the statement
+            $stmt->close();
+        } else {
+            // Error preparing the statement
+           // echo "Error preparing query: " . $conn->error . "<br>";
+            echo "<script>alert('Error: Unable to process the request.'); window.location.href = 'validity.php';</script>";
+        }
     } else {
-        echo "<script>alert('Invalid Data!'); window.location.href='index.php';</script>";
+        // If no ID is provided in the form
+        echo "<script>alert('Invalid request. Please enter a valid ID.'); window.location.href = 'validity.php';</script>";
     }
-
-    // Close the connection
-    $conn->close();
 } else {
-    echo "Invalid request method.";
+    // If the form wasn't submitted properly
+    echo "<script>alert('Invalid request.'); window.location.href = 'validity.php';</script>";
 }
 ?>

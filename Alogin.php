@@ -44,32 +44,24 @@
 
 
 
-	<div class="container">
-		<div class="h-screen flex items-center justify-center backimg">
-			<div
-			  class="bg-green bg-opacity-0 backdrop-blur-lg px-8 py-10 rounded-md border"
-			>
-			<div class="logo flex flex-col items-center justify-center h-10 w-full text-center ">
-				<a href="index.php"><img src="image/favicon.png" alt="Logo" style="width: 80px;"></a>
-			</div>
-			<h2 class="text-4xl text-center mb-5 font-semibold text-green-500 py-3">Admin Login</h2>
-			
-            <form method="POST" action="Aloginhelper.php">
-                
-                <input type="text" class="text-white" name ="e" style="background:transparent; outline:none;" placeholder="Email">
+	<div class="flex items-center justify-center min-h-screen bg-cover bg-center backimg">
+    <div class="bg-green-600 bg-opacity-10 backdrop-blur-lg px-8 py-10 rounded-md border border-green-300 shadow-lg w-full max-w-md">
+        <div class="logo flex flex-col items-center justify-center h-16 w-full text-center mb-4">
+            <a href="index.php"><img src="image/favicon.png" alt="Logo" class="w-20"></a>
+        </div>
+        <h2 class="text-3xl text-center font-semibold text-green-500 py-3">Admin Login</h2>
 
-				<br><br>
-                <input type="password" class="text-white" name="p" style="background:transparent; outline:none;" placeholder="Password">
+        <form method="POST" action="Aloginhelper.php" class="space-y-4">
+            <input type="email" name="e" class="w-full px-4 py-2 text-white bg-transparent border-b border-green-400 focus:outline-none focus:border-green-600" placeholder="Email" required>
 
-                <br><br>
-                <div class="w-full flex justify-center items-center" ><button type="submit"  class="focus:outline-none text-white bg-[#22c55e]    text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 rounded">Log In</button></div>
-            </form>
-				
-			  
-			  
-			</div>
-		  </div>
-	</div>
+            <input type="password" name="p" class="w-full px-4 py-2 text-white bg-transparent border-b border-green-400 focus:outline-none focus:border-green-600" placeholder="Password" required>
+
+            <div class="w-full flex justify-center">
+                <button type="submit" class="w-full text-white bg-green-500 hover:bg-green-600 text-sm px-5 py-2.5 rounded transition">Log In</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 	<script src="js/jquery.min.js"></script>
   <script src="js/popper.js"></script>
